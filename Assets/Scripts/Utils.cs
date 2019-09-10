@@ -3,12 +3,13 @@
 [Serializable]
 public class Utils
 {
-    public static bool IsFloatEpsilon(float value, float epsilon = 0.01f )
+    private const float _epsilon = 0.001f;
+    public static bool IsFloatSmallerThanEpsilon(float value, float epsilon = _epsilon )
     {
         return value > -epsilon && value < epsilon;
     }
 
-    public static bool IsFloatGreaterThanEpsilon(float value, float epsilon = 0.01f )
+    public static bool IsFloatGreaterThanEpsilon(float value, float epsilon = _epsilon )
     {
         return value > epsilon;
     }

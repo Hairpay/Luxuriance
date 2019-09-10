@@ -3,30 +3,48 @@
 public class Avatar : Entity
 {
     #region Members
-    private enum State { idle, move };
+    private enum State { idle, move, jump };
     private State _state;
 
     private bool _isJumpEnabled;
+    public float dist = 0.1f;
     #endregion
 
     #region Behaviour
+    protected override void Awake()
+    {
+        base.Awake();
+        _isDirectionRight = true;
+    }
+
     private void Start()
     {
         SetState( State.idle );
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         HandlePhysics();
+    }
+
+    private void Update()
+    {
         _executeState();
     }
 
     private void HandlePhysics()
     {
-        //_rigidbody.velocity.x = Input.GetAxis( "Horizontal" );
-        //Translate( _rigidbody.velocity );
-        _rigidbody.velocity = new Vector2( Input.GetAxis( "Horizontal" ) * _moveSpeed, _rigidbody.velocity.y );
-        transform.Translate( _rigidbody.velocity );
+        float horizontalAxis = Input.GetAxis( "Horizontal" );
+        _rigidbody.velocity = new Vector2( horizontalAxis * _moveSpeed, _rigidbody.velocity.y );
+        //_velocity.x = horizontalAxis * _moveSpeed;
+        //transform.Translate( _rigidbody.velocity );
+        bool col = Physics2D.Raycast( _collider.transform.position, Vector2.down, dist);
+        Debug.Log( col );
+        transform.Translate( _velocity );
+    }
+
+    private void HandleGraphics()
+    {
     }
 
     private void HandleInputs()
@@ -37,25 +55,23 @@ public class Avatar : Entity
     #region States
     private void Stands()
     {
-        if( Utils.IsFloatGreaterThanEpsilon(_rigidbody.velocity.x) )
+        if( Utils.IsFloatSmallerThanEpsilon( _rigidbody.velocity.x ) == false )
         {
-            Vector2 mirrorScale = transform.localScale;
-            mirrorScale.x = Mathf.Abs( mirrorScale.x );
-            transform.localScale = mirrorScale;
-            SetState( State.move );
-        }
-        else if( !Utils.IsFloatGreaterThanEpsilon( _rigidbody.velocity.x, -0.01f) )
-        {
-            Vector2 mirrorScale = transform.localScale;
-            mirrorScale.x = -Mathf.Abs( mirrorScale.x );
-            transform.localScale = mirrorScale;
             SetState( State.move );
         }
     }
 
     private void Moves()
     {
-        if( Utils.IsFloatEpsilon( _rigidbody.velocity.x ) )
+        if( Utils.IsFloatSmallerThanEpsilon( _rigidbody.velocity.x ) == true )
+        {
+            SetState( State.idle );
+        }
+    }
+
+    private void Jumps()
+    {
+        if( _isOnGround )
         {
             SetState( State.idle );
         }
@@ -69,15 +85,18 @@ public class Avatar : Entity
         switch( state )
         {
             case State.idle:
-                Debug.Log( "ORAORAORAORAORAORAORAORAORAORAORAORAORAORAORAORA" );
-                _isJumpEnabled = true;
+                Debug.Log( "stands" );
                 _animator.Play( "Idle" );
                 _executeState = Stands;
                 break;
             case State.move:
-                Debug.Log( "They see me rolling..." );
+                Debug.Log( "moves" );
                 _animator.Play( "Walk" );
                 _executeState = Moves;
+                break;
+            case State.jump:
+                Debug.Log( "jumps" );
+                _executeState = Jumps;
                 break;
         }
     }
