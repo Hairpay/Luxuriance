@@ -4,37 +4,54 @@ using UnityEngine;
 
 public abstract class Entity : MonoBehaviour
 {
+    #region Members
     public delegate void ExecuteState();
+
+    public float _moveSpeed;
+    public float _jumpForce;
+    public bool _isOnGround;
+    public bool _isDirectionRight;
+    public float _groundCollisionDetectionDistance;
+    public Transform _ground;
+
     protected ExecuteState _executeState;
     protected Collider2D _collider;
     protected Rigidbody2D _rigidbody;
     protected Animator _animator;
-    public float _moveSpeed;
-    public Vector2 _velocity;
-    public bool _isOnGround ;
-    public bool _isDirectionRight;
-    
-    protected virtual void Awake()
+    #endregion
+
+    #region Behaviour // Always call virtual methods within corresponding derived class overriden methods !
+    private void Awake()
     {
         _collider = GetComponent<Collider2D>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
-        _velocity = Vector2.zero;
     }
 
-    protected void Translate(Vector2 v)
+    protected virtual void Update()
     {
-        transform.position = new Vector2
-        (
-            transform.position.x + v.x,
-            transform.position.y + v.y
-        );
+        _executeState();
     }
 
-    protected bool IsOnGround()
+    protected virtual void FixedUpdate()
     {
-        float distGround = 0.1f;
-        _isOnGround = Physics2D.Raycast( transform.position, Vector2.down, distGround );
+        CheckGroundCollision();
+        Debug.Log( _isOnGround.ToString() );
+    }
+    #endregion
+
+    protected bool CheckGroundCollision()
+    {
+        float offset = -0.01f;
+        Vector2 colliderBottomLeft = new Vector2( _collider.bounds.min.x, _collider.bounds.min.y + offset );
+        Vector2 colliderBottomRight = new Vector2( _collider.bounds.min.x + _collider.bounds.size.x, _collider.bounds.min.y + offset );
+
+        //Debug.DrawRay( colliderBottomLeft, new Vector2( 0, -_groundCollisionDetectionDistance ), Color.cyan );
+        //Debug.DrawRay( colliderBottomRight, new Vector2( 0, -_groundCollisionDetectionDistance ), Color.cyan );
+
+        _isOnGround = Physics2D.Raycast( colliderBottomLeft, Vector2.down, _groundCollisionDetectionDistance )
+            || Physics2D.Raycast( colliderBottomRight, Vector2.down, _groundCollisionDetectionDistance );
+
         return _isOnGround;
     }
 }
