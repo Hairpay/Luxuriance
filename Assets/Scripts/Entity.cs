@@ -12,7 +12,6 @@ public abstract class Entity : MonoBehaviour
     public bool _isOnGround;
     public bool _isDirectionRight;
     public float _groundCollisionDetectionDistance;
-    public Transform _ground;
 
     protected ExecuteState _executeState;
     protected Collider2D _collider;
