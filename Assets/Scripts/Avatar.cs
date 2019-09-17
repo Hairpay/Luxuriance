@@ -48,7 +48,7 @@ public class Avatar : Entity
     private void HandleInputs()
     {
         // Jump
-        if( _isOnGround && Input.GetButtonDown( "Jump" ) )
+        if( _collisionDirection.Bottom && Input.GetButtonDown( "Jump" ) )
         {
             _rigidbody.AddForce( Vector2.up * _jumpForce );
             SetState( State.jump );
@@ -75,7 +75,7 @@ public class Avatar : Entity
 
     private void Jumps()
     {
-        if( _isOnGround )
+        if( _collisionDirection.Bottom )
         {
             SetState( State.idle );
         }

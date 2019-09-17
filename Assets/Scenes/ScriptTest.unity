@@ -372,9 +372,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _moveSpeed: 5
   _jumpForce: 600
-  _isOnGround: 0
-  _isDirectionRight: 0
-  _groundCollisionDetectionDistance: 0.05
+  _isDirectionRight: 1
+  _collisionDetectionDistance: 0.05
+  _drawCollisionsEnabled: 1
 --- !u!61 &953958697
 BoxCollider2D:
   m_ObjectHideFlags: 0
