@@ -38,6 +38,21 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Foreground
+    uniqueID: 3824343629
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Ground_Cosmetics
+    uniqueID: 696662461
+    locked: 0
+  - name: Ground
+    uniqueID: 2003696901
+    locked: 0
+  - name: characters
+    uniqueID: 2163027547
+    locked: 0
+  - name: Background
+    uniqueID: 2220533297
     locked: 0
