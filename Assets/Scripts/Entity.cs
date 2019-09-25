@@ -6,7 +6,6 @@ public abstract class Entity : MonoBehaviour
     public delegate void ExecuteState();
 
     public float _moveSpeed;
-    public float _jumpForce;
     public bool _isDirectionRight;
     public float _collisionDetectionDistance;
     public bool _drawCollisionsEnabled;
@@ -24,6 +23,12 @@ public abstract class Entity : MonoBehaviour
         {
             bool any = Bottom || Top || LeftBottom || RightBottom || LeftTop || RightTop;
             return any;
+        }
+
+        public bool AnySide()
+        {
+            bool anySide = LeftBottom || RightBottom || LeftTop || RightTop;
+            return anySide;
         }
 
         public bool None()
@@ -141,4 +146,13 @@ public abstract class Entity : MonoBehaviour
         }
         #endregion
     }
+
+    #region Other
+    protected void SetVelocity(float? x = null, float? y = null)
+    {
+        float newX = x ?? _rigidbody.velocity.x;
+        float newY = y ?? _rigidbody.velocity.y;
+        _rigidbody.velocity = new Vector2(newX, newY);
+    }
+    #endregion
 }
