@@ -69,6 +69,7 @@ public abstract class Entity : MonoBehaviour
     protected Collider2D _collider;
     protected Rigidbody2D _rigidbody;
     protected Animator _animator;
+    protected float _gravityScaleDefault;
     #endregion
 
     #region Behaviour // Always call virtual methods within corresponding derived class overriden methods !
@@ -78,6 +79,7 @@ public abstract class Entity : MonoBehaviour
         _collider = GetComponent<Collider2D>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
+        _gravityScaleDefault = _rigidbody.gravityScale;
     }
 
     protected virtual void Update()
@@ -152,7 +154,7 @@ public abstract class Entity : MonoBehaviour
     {
         float newX = x ?? _rigidbody.velocity.x;
         float newY = y ?? _rigidbody.velocity.y;
-        _rigidbody.velocity = new Vector2(newX, newY);
+        _rigidbody.velocity.Set( newX, newY );
     }
     #endregion
 }
