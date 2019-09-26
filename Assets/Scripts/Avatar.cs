@@ -11,7 +11,8 @@ public class Avatar : Entity
 
     private enum State { idle, walk, jump, dash, hop };
     private float timer;
-    //private HashSet<State> _states;
+    private Vector2 _shotDirection;
+    private Vector2 _direction;
     #endregion
 
     #region Behaviour
@@ -53,12 +54,13 @@ public class Avatar : Entity
 
     private void HandleInputs()
     {
+        _shotDirection.Set(Input.GetAxis("HorizontalDirection"), Input.GetAxis( "VerticalDirection" ) );
         // Jump
         if( _collisionDirection.Bottom && Input.GetButtonDown( "Jump" ) )
         {
             SetState( State.jump );
         }
-        if( Input.GetButtonDown( "Fire2" ) )
+        if( Input.GetButtonDown( "Dash" ) )
         {
             SetState( State.dash );
         }
@@ -84,7 +86,7 @@ public class Avatar : Entity
     #region States
     private void Idles()
     {
-        if( Input.GetButton( "Horizontal" ) )
+        if( GetAxisAbsolute( "Horizontal" ) != 0.0f )
         {
             SetState( State.walk );
         }
@@ -92,10 +94,10 @@ public class Avatar : Entity
 
     private void Walks()
     {
-        float horizontalAxis = Input.GetAxisRaw( "Horizontal" );
+        float horizontalAxis = GetAxisAbsolute( "Horizontal" );
         _rigidbody.velocity = new Vector2( horizontalAxis * _moveSpeed, _rigidbody.velocity.y );
 
-        if( Input.GetButtonUp( "Horizontal" ) )
+        if( horizontalAxis == 0.0f )
         {
             SetState( State.idle );
         }
@@ -114,7 +116,7 @@ public class Avatar : Entity
         timer -= Time.deltaTime;
         if( timer <= 0.0f || _collisionDirection.AnySide() )
         {
-            _rigidbody.gravityScale = 3;
+            _rigidbody.gravityScale = _gravityScaleDefault;
             SetVelocity( x: 0.0f );
             SetState( State.idle );
         }
@@ -149,7 +151,7 @@ public class Avatar : Entity
                 timer = _dashDuration;
                 _rigidbody.gravityScale = 0;
                 SetVelocity( y: 0.0f );
-                _rigidbody.AddForce( new Vector2(Input.GetAxisRaw("Horizontal"), 0) * _dashForce );
+                _rigidbody.AddForce( new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis( "Vertical" ) ).normalized * _dashForce );
                 _executeState = Dashes;
                 break;
         }
@@ -157,5 +159,17 @@ public class Avatar : Entity
     #endregion
 
     #region Other
+    private float GetAxisAbsolute(string axisName )
+    {
+        float axis = Input.GetAxis( axisName );
+        if( axis > 0 )
+            axis = 1.0f;
+        else if( axis < 0 )
+            axis = -1.0f;
+        else
+            axis = 0.0f;
+
+        return axis;
+    }
     #endregion
 }
