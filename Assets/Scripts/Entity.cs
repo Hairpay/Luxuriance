@@ -91,10 +91,10 @@ public abstract class Entity : MonoBehaviour
     {
         CheckCollisions();
 
-        if( _collisionDirection.Any() )
-        {
-            Debug.Log( _collisionDirection.ToString() );
-        }
+        //if( _collisionDirection.Any() )
+        //{
+        //    Debug.Log( _collisionDirection.ToString() );
+        //}
     }
     #endregion
 

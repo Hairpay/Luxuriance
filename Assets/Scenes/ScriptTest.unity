@@ -5563,8 +5563,10 @@ MonoBehaviour:
   _collisionDetectionDistance: 0.05
   _drawCollisionsEnabled: 1
   _jumpForce: 800
-  _dashForce: 1200
-  _dashDuration: 0.1
+  _dashForce: 800
+  _dashDuration: 0.2
+  _dashRecovery: 5
+  _maxDashes: 1
 --- !u!61 &953958697
 BoxCollider2D:
   m_ObjectHideFlags: 0

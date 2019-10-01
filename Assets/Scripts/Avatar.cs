@@ -8,17 +8,22 @@ public class Avatar : Entity
     public float _jumpForce;
     public float _dashForce;
     public float _dashDuration;
+    public float _dashRecovery;
+    public int _maxDashes;
 
     private enum State { idle, walk, jump, dash, hop };
-    private float timer;
+    private TimerManager _timerManager;
     private Vector2 _shotDirection;
     private Vector2 _direction;
+    private int _dashesLeft;
     #endregion
 
     #region Behaviour
     private void Start()
     {
+        _timerManager = new TimerManager();
         _isDirectionRight = true;
+        _dashesLeft = _maxDashes;
         SetState( State.idle );
     }
 
@@ -26,6 +31,7 @@ public class Avatar : Entity
     {
         HandleInputs();
         HandleGraphics();
+        _timerManager.UpdateTimers();
         base.Update();
     }
 
@@ -37,6 +43,10 @@ public class Avatar : Entity
 
     private void HandlePhysics()
     {
+        if( _collisionDirection.Bottom )
+        {
+            _dashesLeft = _maxDashes;
+        }
     }
 
     private void HandleGraphics()
@@ -60,7 +70,8 @@ public class Avatar : Entity
         {
             SetState( State.jump );
         }
-        if( Input.GetButtonDown( "Dash" ) )
+        //Dash
+        else if( Input.GetButtonDown( "Dash" ) && _dashesLeft > 0 && !_timerManager.Exists("DashRecovery") )
         {
             SetState( State.dash );
         }
@@ -113,11 +124,11 @@ public class Avatar : Entity
 
     private void Dashes()
     {
-        timer -= Time.deltaTime;
-        if( timer <= 0.0f || _collisionDirection.AnySide() )
+        if( !_timerManager.Exists("DashDuration") || _collisionDirection.AnySide() )
         {
             _rigidbody.gravityScale = _gravityScaleDefault;
             SetVelocity( x: 0.0f );
+            _timerManager.CreateTimer( "DashRecovery", _dashDuration );
             SetState( State.idle );
         }
     }
@@ -129,29 +140,30 @@ public class Avatar : Entity
         switch( state )
         {
             case State.idle:
-                Debug.Log( "idles" );
+                //Debug.Log( "idles" );
                 _animator.Play( "Idle" );
                 _executeState = Idles;
                 break;
 
             case State.walk:
-                Debug.Log( "walks" );
+                //Debug.Log( "walks" );
                 _animator.Play( "Walk" );
                 _executeState = Walks;
                 break;
 
             case State.jump:
-                Debug.Log( "jumps" );
+                //Debug.Log( "jumps" );
                 _rigidbody.AddForce( Vector2.up * _jumpForce );
                 _executeState = Jumps;
                 break;
 
             case State.dash:
                 Debug.Log( "dashes" );
-                timer = _dashDuration;
-                _rigidbody.gravityScale = 0;
-                SetVelocity( y: 0.0f );
-                _rigidbody.AddForce( new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis( "Vertical" ) ).normalized * _dashForce );
+                _timerManager.CreateTimer( "DashDuration", _dashDuration );
+                --_dashesLeft;
+                //_rigidbody.gravityScale = 0;
+                _rigidbody.velocity.Set( 0, 0 );
+                _rigidbody.AddForce( new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis( "Vertical" ) ) * _dashForce );
                 _executeState = Dashes;
                 break;
         }
