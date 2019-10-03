@@ -47,6 +47,9 @@ TagManager:
   - name: characters
     uniqueID: 2163027547
     locked: 0
+  - name: Interactables
+    uniqueID: 1148272577
+    locked: 0
   - name: Ground
     uniqueID: 2003696901
     locked: 0
