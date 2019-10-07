@@ -68,4 +68,9 @@ public class TimerManager
     {
         return _timers.ContainsKey( key );
     }
+
+    public bool IsOverOrNull(string key )
+    {
+        return !Exists( key );
+    }
 }

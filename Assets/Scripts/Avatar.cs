@@ -12,10 +12,11 @@ public class Avatar : Entity
     public int _maxDashes;
 
     private enum State { idle, walk, jump, dash, hop };
+    private State _currentState;
     private TimerManager _timerManager;
     private Vector2 _shotDirection;
     private Vector2 _direction;
-    private int _dashesLeft;
+    public int _dashesLeft;
     #endregion
 
     #region Behaviour
@@ -43,7 +44,7 @@ public class Avatar : Entity
 
     private void HandlePhysics()
     {
-        if( _collisionDirection.Bottom )
+        if( _collisionDirection.Bottom && !IsState( State.dash ) )
         {
             _dashesLeft = _maxDashes;
         }
@@ -71,7 +72,8 @@ public class Avatar : Entity
             SetState( State.jump );
         }
         //Dash
-        else if( Input.GetButtonDown( "Dash" ) && _dashesLeft > 0 && !_timerManager.Exists("DashRecovery") )
+        else if( Input.GetButtonDown( "Dash" )&& _dashesLeft > 0
+            && _timerManager.IsOverOrNull( "DashRecovery") )
         {
             SetState( State.dash );
         }
@@ -124,11 +126,11 @@ public class Avatar : Entity
 
     private void Dashes()
     {
-        if( !_timerManager.Exists("DashDuration") || _collisionDirection.AnySide() )
+        if( _timerManager.IsOverOrNull( "DashDuration") )
         {
             _rigidbody.gravityScale = _gravityScaleDefault;
-            SetVelocity( x: 0.0f );
-            _timerManager.CreateTimer( "DashRecovery", _dashDuration );
+            //_rigidbody.velocity = Vector2.zero;
+            _timerManager.CreateTimer( "DashRecovery", _dashRecovery );
             SetState( State.idle );
         }
     }
@@ -137,33 +139,44 @@ public class Avatar : Entity
     #region Setters
     private void SetState( State state )
     {
+        _currentState = state;
         switch( state )
         {
             case State.idle:
-                //Debug.Log( "idles" );
+                Debug.Log( "idles" );
                 _animator.Play( "Idle" );
+                _rigidbody.velocity = Vector2.zero;
                 _executeState = Idles;
                 break;
 
             case State.walk:
-                //Debug.Log( "walks" );
+                Debug.Log( "walks" );
                 _animator.Play( "Walk" );
                 _executeState = Walks;
                 break;
 
             case State.jump:
-                //Debug.Log( "jumps" );
+                Debug.Log( "jumps" );
                 _rigidbody.AddForce( Vector2.up * _jumpForce );
                 _executeState = Jumps;
                 break;
 
             case State.dash:
                 Debug.Log( "dashes" );
+                _animator.Play( "Dash" );
                 _timerManager.CreateTimer( "DashDuration", _dashDuration );
                 --_dashesLeft;
-                //_rigidbody.gravityScale = 0;
-                _rigidbody.velocity.Set( 0, 0 );
-                _rigidbody.AddForce( new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis( "Vertical" ) ) * _dashForce );
+                _rigidbody.gravityScale = 0;
+                _rigidbody.velocity = Vector2.zero;
+                if( Utils.IsFloatEpsilonZero( Input.GetAxis( "Horizontal" ) )
+                    && Utils.IsFloatEpsilonZero( Input.GetAxis( "Vertical" ) ) )
+                {
+                    _rigidbody.AddForce( ( _isDirectionRight ? Vector2.right : Vector2.left ) * _dashForce );
+                }
+                else
+                {
+                    _rigidbody.AddForce( new Vector2( GetAxisAbsolute( "Horizontal" ), GetAxisAbsolute( "Vertical" ) ).normalized * _dashForce );
+                }
                 _executeState = Dashes;
                 break;
         }
@@ -182,6 +195,11 @@ public class Avatar : Entity
             axis = 0.0f;
 
         return axis;
+    }
+
+    private bool IsState(State state )
+    {
+        return _currentState == state;
     }
     #endregion
 }
