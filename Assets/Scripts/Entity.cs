@@ -66,6 +66,7 @@ public abstract class Entity : MonoBehaviour
     protected CollisionDirection _collisionDirection;
 
     protected ExecuteState _executeState;
+    public bool _isStateEntryMode;
     protected Collider2D _collider;
     protected Rigidbody2D _rigidbody;
     protected Animator _animator;
@@ -80,6 +81,7 @@ public abstract class Entity : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         _gravityScaleDefault = _rigidbody.gravityScale;
+        _isStateEntryMode = false;
     }
 
     protected virtual void Update()
@@ -95,6 +97,12 @@ public abstract class Entity : MonoBehaviour
         //{
         //    Debug.Log( _collisionDirection.ToString() );
         //}
+    }
+
+    protected void SetState(ExecuteState state )
+    {
+        _executeState = state;
+        _isStateEntryMode = true;
     }
     #endregion
 
@@ -156,5 +164,15 @@ public abstract class Entity : MonoBehaviour
         float newY = y ?? _rigidbody.velocity.y;
         _rigidbody.velocity.Set( newX, newY );
     }
+
+    protected bool IsState( ExecuteState state )
+    {
+        return _executeState == state;
+    }
+    #endregion
+
+    #region Properties
+    protected bool IsOnGround { get { return _rigidbody.velocity.y == 0.0f && _collisionDirection.Bottom; } }
+    protected bool IsFalling { get { return _rigidbody.velocity.y < 0.0f; } }
     #endregion
 }

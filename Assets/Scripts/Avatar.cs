@@ -11,8 +11,6 @@ public class Avatar : Entity
     public float _dashRecovery;
     public int _maxDashes;
 
-    private enum State { idle, walk, jump, dash, hop };
-    private State _currentState;
     private TimerManager _timerManager;
     private Vector2 _shotDirection;
     private Vector2 _direction;
@@ -25,7 +23,7 @@ public class Avatar : Entity
         _timerManager = new TimerManager();
         _isDirectionRight = true;
         _dashesLeft = _maxDashes;
-        SetState( State.idle );
+        SetState( Idle );
     }
 
     protected override void Update()
@@ -44,7 +42,7 @@ public class Avatar : Entity
 
     private void HandlePhysics()
     {
-        if( _collisionDirection.Bottom && !IsState( State.dash ) )
+        if( _collisionDirection.Bottom && IsOnGround )
         {
             _dashesLeft = _maxDashes;
         }
@@ -67,77 +65,104 @@ public class Avatar : Entity
     {
         _shotDirection.Set(Input.GetAxis("HorizontalDirection"), Input.GetAxis( "VerticalDirection" ) );
         // Jump
-        if( _collisionDirection.Bottom && Input.GetButtonDown( "Jump" ) )
+        if( IsOnGround && Input.GetButtonDown( "Jump" ) )
         {
-            SetState( State.jump );
+            _rigidbody.AddForce( Vector2.up * _jumpForce );
         }
         //Dash
         else if( Input.GetButtonDown( "Dash" )&& _dashesLeft > 0
             && _timerManager.IsOverOrNull( "DashRecovery") )
         {
-            SetState( State.dash );
-        }
-    }
-
-    private void HandeStates()
-    {
-        if( Input.GetButtonDown( "Dash" ) )
-        {
-            SetState( State.dash );
-        }
-        else if( Input.GetButtonDown( "Jump" ) )
-        {
-            SetState( State.jump );
-        }
-        else if( Input.GetButton( "Horizontal" ) )
-        {
-            SetState( State.walk );
+            SetState( Dash );
         }
     }
     #endregion
 
     #region States
-    private void Idles()
+    private void Idle()
     {
-        if( GetAxisAbsolute( "Horizontal" ) != 0.0f )
+        // On State Entry
+        if( _isStateEntryMode )
         {
-            SetState( State.walk );
+            Debug.Log( "idles" );
+            _animator.Play( "Idle" );
+            _isStateEntryMode = false;
+        }
+        else
+        {
+            // On Update
+            if( GetAxisAbsolute( "Horizontal" ) != 0.0f )
+            {
+                SetState( Walk );
+            }
         }
     }
 
-    private void Walks()
+    private void Walk()
     {
-        float horizontalAxis = GetAxisAbsolute( "Horizontal" );
-        _rigidbody.velocity = new Vector2( horizontalAxis * _moveSpeed, _rigidbody.velocity.y );
-
-        if( horizontalAxis == 0.0f )
+        // On State Entry
+        if( _isStateEntryMode )
         {
-            SetState( State.idle );
+            Debug.Log( "walks" );
+            _animator.Play( "Walk" );
+            _isStateEntryMode = false;
+        }
+        else
+        {
+            // On Update
+            float horizontalAxis = GetAxisAbsolute( "Horizontal" );
+            _rigidbody.velocity = new Vector2( horizontalAxis * _moveSpeed, _rigidbody.velocity.y );
+
+            if( horizontalAxis == 0.0f )
+            {
+                SetState( Idle );
+            }
         }
     }
 
-    private void Jumps()
+    private void Dash()
     {
-        if( _collisionDirection.Bottom )
+        // On State Entry
+        if( _isStateEntryMode )
         {
-            SetState( State.idle );
+            _animator.Play( "Dash" );
+            _timerManager.CreateTimer( "DashDuration", _dashDuration );
+            _rigidbody.gravityScale = 0;
+            _rigidbody.velocity = Vector2.zero;
+
+            if( Utils.IsFloatEpsilonZero( Input.GetAxis( "Horizontal" ) )
+                && Utils.IsFloatEpsilonZero( Input.GetAxis( "Vertical" ) ) )
+            {
+                _rigidbody.AddForce( ( _isDirectionRight ? Vector2.right : Vector2.left ) * _dashForce );
+            }
+            else
+            {
+                _rigidbody.AddForce( new Vector2( Input.GetAxis( "Horizontal" ), Input.GetAxis( "Vertical" ) ).normalized * _dashForce );
+            }
+            _isStateEntryMode = false;
+        }
+        else
+        {
+            // On Update
+            if( _timerManager.IsOverOrNull( "DashDuration" ) )
+            {
+                --_dashesLeft;
+                _rigidbody.velocity = Vector2.zero;
+                _rigidbody.gravityScale = _gravityScaleDefault;
+                _timerManager.CreateTimer( "DashRecovery", _dashRecovery );
+                SetState( Idle );
+            }
         }
     }
 
-    private void Dashes()
+    private void DashFreeze()
     {
-        if( _timerManager.IsOverOrNull( "DashDuration") )
-        {
-            _rigidbody.gravityScale = _gravityScaleDefault;
-            //_rigidbody.velocity = Vector2.zero;
-            _timerManager.CreateTimer( "DashRecovery", _dashRecovery );
-            SetState( State.idle );
-        }
+
     }
     #endregion
-
+    
     #region Setters
-    private void SetState( State state )
+    /*private void SetState( State state )
     {
         _currentState = state;
         switch( state )
@@ -180,7 +205,7 @@ public class Avatar : Entity
                 _executeState = Dashes;
                 break;
         }
-    }
+    }*/
     #endregion
 
     #region Other
@@ -195,11 +220,6 @@ public class Avatar : Entity
             axis = 0.0f;
 
         return axis;
-    }
-
-    private bool IsState(State state )
-    {
-        return _currentState == state;
     }
     #endregion
 }
