@@ -10,11 +10,15 @@ public class Avatar : Entity
     public float _dashDuration;
     public float _dashRecovery;
     public int _maxDashes;
+    public float _hopDuration;
 
+    private bool _controlsEnabled;
     private TimerManager _timerManager;
-    private Vector2 _shotDirection;
     private Vector2 _direction;
-    public int _dashesLeft;
+    private Vector2 _shotDirection;
+    private int _dashesLeft;
+    private Vector2 _storeVelocity;
+    private float _lastAxis;
     #endregion
 
     #region Behaviour
@@ -22,7 +26,8 @@ public class Avatar : Entity
     {
         _timerManager = new TimerManager();
         _isDirectionRight = true;
-        _dashesLeft = _maxDashes;
+        _controlsEnabled = true;
+         _dashesLeft = _maxDashes;
         SetState( Idle );
     }
 
@@ -63,17 +68,23 @@ public class Avatar : Entity
 
     private void HandleInputs()
     {
-        _shotDirection.Set(Input.GetAxis("HorizontalDirection"), Input.GetAxis( "VerticalDirection" ) );
-        // Jump
-        if( IsOnGround && Input.GetButtonDown( "Jump" ) )
+        //Directions
+        _shotDirection.Set( Input.GetAxis( "HorizontalDirection" ), Input.GetAxis( "VerticalDirection" ) );
+        _direction.Set( Input.GetAxis( "Horizontal" ), Input.GetAxis( "Vertical" ) );
+
+        if( _controlsEnabled )
         {
-            _rigidbody.AddForce( Vector2.up * _jumpForce );
-        }
-        //Dash
-        else if( Input.GetButtonDown( "Dash" )&& _dashesLeft > 0
-            && _timerManager.IsOverOrNull( "DashRecovery") )
-        {
-            SetState( Dash );
+            // Jump
+            if( IsOnGround && Input.GetButtonDown( "Jump" ) )
+            {
+                DoJump();
+            }
+            // Dash
+            else if( Input.GetButtonDown( "Dash" ) && _dashesLeft > 0
+                && _timerManager.IsOverOrNull( "DashRecovery" ) )
+            {
+                SetState( Dash );
+            }
         }
     }
     #endregion
@@ -84,17 +95,14 @@ public class Avatar : Entity
         // On State Entry
         if( _isStateEntryMode )
         {
-            Debug.Log( "idles" );
+            Debug.Log( "idle" );
             _animator.Play( "Idle" );
             _isStateEntryMode = false;
         }
-        else
+        // On Update
+        else if( GetAxisAbsolute( "Horizontal" ) != 0.0f )
         {
-            // On Update
-            if( GetAxisAbsolute( "Horizontal" ) != 0.0f )
-            {
-                SetState( Walk );
-            }
+            SetState( Walk );
         }
     }
 
@@ -103,20 +111,34 @@ public class Avatar : Entity
         // On State Entry
         if( _isStateEntryMode )
         {
-            Debug.Log( "walks" );
+            Debug.Log( "walk" );
             _animator.Play( "Walk" );
             _isStateEntryMode = false;
+            //if( !_timerManager.Exists( "IdleState" ) ) _timerManager.CreateTimer( "IdleState", 0.03f );
+        }
+        // On Update
+        else if( !Utils.IsFloatEpsilonZero( _rigidbody.velocity.x )
+            && ( _collisionDirection.RightBottom && _isDirectionRight && !_collisionDirection.RightTop
+                || _collisionDirection.LeftBottom && !_isDirectionRight && !_collisionDirection.LeftTop )
+            && IsOnGround )
+        {
+            SetState( Hop );
         }
         else
         {
-            // On Update
             float horizontalAxis = GetAxisAbsolute( "Horizontal" );
             _rigidbody.velocity = new Vector2( horizontalAxis * _moveSpeed, _rigidbody.velocity.y );
 
-            if( horizontalAxis == 0.0f )
+            if( horizontalAxis == 0.0f /*&& _timerManager.IsOverOrNull( "IdleState" )*/)
             {
                 SetState( Idle );
             }
+            /*else
+            {
+                _timerManager.AddTimeToTimer( "IdleState", Time.deltaTime );
+            }
+
+            _lastAxis = horizontalAxis;*/
         }
     }
 
@@ -125,6 +147,7 @@ public class Avatar : Entity
         // On State Entry
         if( _isStateEntryMode )
         {
+            Debug.Log( "dash" );
             _animator.Play( "Dash" );
             _timerManager.CreateTimer( "DashDuration", _dashDuration );
             _rigidbody.gravityScale = 0;
@@ -137,27 +160,75 @@ public class Avatar : Entity
             }
             else
             {
-                _rigidbody.AddForce( new Vector2( Input.GetAxis( "Horizontal" ), Input.GetAxis( "Vertical" ) ).normalized * _dashForce );
+                _rigidbody.AddForce( _direction.normalized * _dashForce );
             }
             _isStateEntryMode = false;
         }
-        else
+        // On Update
+        else if( _timerManager.IsOverOrNull( "DashDuration" ) )
         {
-            // On Update
-            if( _timerManager.IsOverOrNull( "DashDuration" ) )
-            {
-                --_dashesLeft;
-                _rigidbody.velocity = Vector2.zero;
-                _rigidbody.gravityScale = _gravityScaleDefault;
-                _timerManager.CreateTimer( "DashRecovery", _dashRecovery );
-                SetState( Idle );
-            }
+            --_dashesLeft;
+            _rigidbody.velocity = Vector2.zero;
+            _rigidbody.gravityScale = _gravityScaleDefault;
+            _timerManager.CreateTimer( "DashRecovery", _dashRecovery );
+            SetState( Idle );
         }
     }
 
     private void DashFreeze()
     {
+        // On Entry
+        if( _isStateEntryMode )
+        {
+            _isStateEntryMode = false;
+        }
+        // On Update
+        else 
+        {
 
+        }
+    }
+
+    private void Hop()
+    {
+        // On Entry
+        if( _isStateEntryMode )
+        {
+            Debug.Log( "hop" );
+            _animator.Play( "Hop" );
+            float horizontalAxis = GetAxisAbsolute( "Horizontal" );
+            _rigidbody.velocity = new Vector2( horizontalAxis * _moveSpeed, 0.0f );
+            _storeVelocity = _rigidbody.velocity;
+            DoJump();
+            _isStateEntryMode = false;
+            _controlsEnabled = false;
+        }
+        // On Update
+        else if( _collisionDirection.Bottom && IsOnGround )
+        {
+            _controlsEnabled = true;
+            if( GetAxisAbsolute( "Horizontal" ) != 0.0f )
+            {
+                if( _collisionDirection.RightBottom && _isDirectionRight && !_collisionDirection.RightTop
+                || _collisionDirection.LeftBottom && !_isDirectionRight && !_collisionDirection.LeftTop )
+                {
+                    SetState( Hop );
+                }
+                else
+                {
+                    SetState( Walk );
+                }
+            }
+            else
+            {
+                _rigidbody.velocity = Vector2.zero;
+                SetState( Idle );
+            }
+        }
+        else
+        {
+            _rigidbody.velocity = new Vector2( _storeVelocity.x, _rigidbody.velocity.y );
+        }
     }
     #endregion
     
@@ -220,6 +291,11 @@ public class Avatar : Entity
             axis = 0.0f;
 
         return axis;
+    }
+
+    private void DoJump()
+    {
+        _rigidbody.AddForce( Vector2.up * _jumpForce );
     }
     #endregion
 }

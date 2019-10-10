@@ -8,4 +8,5 @@ public class Utils
     {
         return value > -epsilon && value < epsilon;
     }
+    public float Epsilon { get { return _epsilon; } }
 }
