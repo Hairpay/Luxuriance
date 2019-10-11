@@ -6,7 +6,6 @@ public abstract class Entity : MonoBehaviour
     public delegate void ExecuteState();
 
     public float _moveSpeed;
-    public bool _isDirectionRight;
     public float _collisionDetectionDistance;
     public bool _drawCollisionsEnabled;
 
@@ -64,13 +63,13 @@ public abstract class Entity : MonoBehaviour
     }
 
     protected CollisionDirection _collisionDirection;
-
+    protected bool _isDirectionRight;
+    protected bool _isStateEntryMode;
+    protected float _gravityScaleDefault;
     protected ExecuteState _executeState;
-    public bool _isStateEntryMode;
     protected Collider2D _collider;
     protected Rigidbody2D _rigidbody;
     protected Animator _animator;
-    protected float _gravityScaleDefault;
     #endregion
 
     #region Behaviour // Always call virtual methods within corresponding derived class overriden methods !

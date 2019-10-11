@@ -5370,7 +5370,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveSpeed: 5
-  _isDirectionRight: 1
   _collisionDetectionDistance: 0.05
   _drawCollisionsEnabled: 1
   _jumpForce: 600
@@ -5378,7 +5377,7 @@ MonoBehaviour:
   _dashDuration: 0.3
   _dashRecovery: 0.1
   _maxDashes: 1
-  _dashesLeft: 0
+  _hopDuration: 0
 --- !u!61 &953958697
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5432,7 +5431,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 953958693}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.27, y: -1.78, z: 0.15917969}
+  m_LocalPosition: {x: -2.27, y: -1.99, z: 0.15917969}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1190366045}
