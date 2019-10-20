@@ -56,6 +56,7 @@ public class Avatar : Entity
     private void HandleGraphics()
     {
         // Flip graphics
+        
         if( _isDirectionRight && _rigidbody.velocity.x < 0
             || !_isDirectionRight && _rigidbody.velocity.x > 0 )
         {
