@@ -60,7 +60,7 @@ public class Avatar : Entity
         if( _isDirectionRight && _rigidbody.velocity.x < 0
             || !_isDirectionRight && _rigidbody.velocity.x > 0 )
         {
-            Vector2 mirrorScale = transform.localScale;
+            Vector3 mirrorScale = transform.localScale;
             mirrorScale.x *= -1;
             transform.localScale = mirrorScale;
             _isDirectionRight = !_isDirectionRight;
