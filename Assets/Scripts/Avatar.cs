@@ -121,7 +121,7 @@ public class Avatar : Entity
         else if( !Utils.IsFloatEpsilonZero( _rigidbody.velocity.x )
             && ( _collisionDirection.RightBottom && _isDirectionRight && !_collisionDirection.RightTop
                 || _collisionDirection.LeftBottom && !_isDirectionRight && !_collisionDirection.LeftTop )
-            && IsOnGround )
+            /*&& IsOnGround*/ )
         {
             SetState( Hop );
         }
@@ -228,7 +228,10 @@ public class Avatar : Entity
         }
         else
         {
-            _rigidbody.velocity = new Vector2( _storeVelocity.x, _rigidbody.velocity.y );
+            if( !_collisionDirection.RightTop && !_collisionDirection.LeftTop )
+            {
+                _rigidbody.velocity = new Vector2( _storeVelocity.x, _rigidbody.velocity.y );
+            }
         }
     }
     #endregion
