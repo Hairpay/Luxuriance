@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d1514134bc4fbd41bb739b1b9a49231, type: 3}
+  m_Name: Tilemap_Grounds_B1 - Copie
+  m_EditorClassIdentifier: 
+  m_DefaultSprite: {fileID: 21300000, guid: 5420a40119042ab43801fa8b7648ea16, type: 3}
+  m_DefaultColliderType: 1
+  m_TilingRules:
+  - m_Neighbors: 0000000000000000000000000000000001000000000000000000000000000000
+    m_Sprites:
+    - {fileID: 21300000, guid: 0917289086755c94e8f4572865f7e0c5, type: 3}
+    - {fileID: 21300000, guid: 5420a40119042ab43801fa8b7648ea16, type: 3}
+    - {fileID: 21300000, guid: 1a1e1f05a8b50ab40aa3f9e09a351d14, type: 3}
+    - {fileID: 21300000, guid: e51d1b0038f62074cb9b5685350565b3, type: 3}
+    - {fileID: 21300000, guid: 275a1f5748ba10b4e9afb4d2c78c98a2, type: 3}
+    - {fileID: 21300000, guid: 330cc99ed93b84d45953aa225c825ab6, type: 3}
+    - {fileID: 21300000, guid: aa33121a273417945b66a94cdfea6ada, type: 3}
+    - {fileID: 21300000, guid: e770aa254ee1c3f408eeec653fde25a3, type: 3}
+    - {fileID: 21300000, guid: d751e17f47876344b93d5b73f404ac20, type: 3}
+    - {fileID: 21300000, guid: e06f19ed6e9a7534097312da1d380e58, type: 3}
+    - {fileID: 21300000, guid: a117c864dcce9534c8ae00ba45d5f8d7, type: 3}
+    m_AnimationSpeed: 4
+    m_PerlinScale: 0.5
+    m_RuleTransform: 0
+    m_Output: 2
+    m_ColliderType: 1
+    m_RandomTransform: 0
+  - m_Neighbors: 0000000002000000000000000100000000000000000000000200000000000000
+    m_Sprites:
+    - {fileID: 21300000, guid: ec4c6d273b07ed3418f43802e8f2ad5c, type: 3}
+    - {fileID: 21300000, guid: b9f1a7765f4965746806c7ff504f2417, type: 3}
+    - {fileID: 21300000, guid: c5800ad717dd6cf4d96a0888f970f70c, type: 3}
+    - {fileID: 21300000, guid: d7960edd3dc4b3c49880d91dbf1b3468, type: 3}
+    - {fileID: 21300000, guid: 37568e231b3e29a40bb3a79b7b811a27, type: 3}
+    - {fileID: 21300000, guid: 2add70204d14d974c85576788dda9982, type: 3}
+    - {fileID: 21300000, guid: 819623d1444c1534a8828befefc95caf, type: 3}
+    - {fileID: 21300000, guid: 0d3062c6e1315ba44bb44573a5963982, type: 3}
+    - {fileID: 21300000, guid: add0dbbebe128614aa9d42247554b480, type: 3}
+    - {fileID: 21300000, guid: 9aad206a06ffb0e48962f82b0b6b4fdd, type: 3}
+    - {fileID: 21300000, guid: 2b2e00f589dc9994aa7ce2f5095df2dc, type: 3}
+    - {fileID: 21300000, guid: 4b30b9209b1db7a4687fde27844e7e8b, type: 3}
+    m_AnimationSpeed: 4
+    m_PerlinScale: 0.5
+    m_RuleTransform: 1
+    m_Output: 2
+    m_ColliderType: 1
+    m_RandomTransform: 0
