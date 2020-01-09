@@ -6,11 +6,11 @@ public class Avatar : Entity
 {
     #region Members
     public float _jumpForce;
+    public float _hopForce;
     public float _dashForce;
     public float _dashDuration;
     public float _dashRecovery;
     public int _maxDashes;
-    public float _hopDuration;
 
     private bool _controlsEnabled;
     private TimerManager _timerManager;
@@ -76,12 +76,14 @@ public class Avatar : Entity
         if( _controlsEnabled )
         {
             // Jump
-            if( IsOnGround && Input.GetButtonDown( "Jump" ) )
+            if( IsOnGround && Input.GetButtonDown( "Jump" )
+                && ( _executeState != Hop && _executeState != Crouch && _executeState != Crawl ) )
             {
-                DoJump();
+                DoJump( _jumpForce );
             }
             // Dash
             else if( Input.GetButtonDown( "Dash" ) && _dashesLeft > 0
+                && ( _executeState != Hop && _executeState != Crouch && _executeState != Crawl )
                 && _timerManager.IsOverOrNull( "DashRecovery" ) )
             {
                 SetState( Dash );
@@ -115,13 +117,21 @@ public class Avatar : Entity
             Debug.Log( "walk" );
             _animator.Play( "Walk" );
             _isStateEntryMode = false;
-            //if( !_timerManager.Exists( "IdleState" ) ) _timerManager.CreateTimer( "IdleState", 0.03f );
+        }
+        else if( !Utils.IsFloatEpsilonZero( _rigidbody.velocity.x )  && IsOnGround
+            && ( _collisionDirection.RightTop && _isDirectionRight && !_collisionDirection.RightBottom
+                || _collisionDirection.LeftTop && !_isDirectionRight && !_collisionDirection.LeftBottom ) )
+        {
+            _collider.transform.Rotate( 0.0f, 0.0f, 90.0f );
+            _collider.transform.Translate( _collider.bounds.size.x * 0.5f, _collider.bounds.size.y * -0.5f, 0.0f );
+            _collisionHitDistanceTopLength = 6.0f;
+            // need to modify the distance between the two detection rays
+            SetState( Crawl );
         }
         // On Update
         else if( !Utils.IsFloatEpsilonZero( _rigidbody.velocity.x )
             && ( _collisionDirection.RightBottom && _isDirectionRight && !_collisionDirection.RightTop
-                || _collisionDirection.LeftBottom && !_isDirectionRight && !_collisionDirection.LeftTop )
-            /*&& IsOnGround*/ )
+                || _collisionDirection.LeftBottom && !_isDirectionRight && !_collisionDirection.LeftTop ) )
         {
             SetState( Hop );
         }
@@ -130,16 +140,10 @@ public class Avatar : Entity
             float horizontalAxis = GetAxisAbsolute( "Horizontal" );
             _rigidbody.velocity = new Vector2( horizontalAxis * _moveSpeed, _rigidbody.velocity.y );
 
-            if( horizontalAxis == 0.0f /*&& _timerManager.IsOverOrNull( "IdleState" )*/)
+            if( horizontalAxis == 0.0f )
             {
                 SetState( Idle );
             }
-            /*else
-            {
-                _timerManager.AddTimeToTimer( "IdleState", Time.deltaTime );
-            }
-
-            _lastAxis = horizontalAxis;*/
         }
     }
 
@@ -200,14 +204,14 @@ public class Avatar : Entity
             float horizontalAxis = GetAxisAbsolute( "Horizontal" );
             _rigidbody.velocity = new Vector2( horizontalAxis * _moveSpeed, 0.0f );
             _storeVelocity = _rigidbody.velocity;
-            DoJump();
+            DoJump( _hopForce );
             _isStateEntryMode = false;
             _controlsEnabled = false;
         }
         // On Update
         else if( _collisionDirection.Bottom && IsOnGround )
         {
-            _controlsEnabled = true;
+             _controlsEnabled = true;
             if( GetAxisAbsolute( "Horizontal" ) != 0.0f )
             {
                 if( _collisionDirection.RightBottom && _isDirectionRight && !_collisionDirection.RightTop
@@ -231,6 +235,50 @@ public class Avatar : Entity
             if( !_collisionDirection.RightTop && !_collisionDirection.LeftTop )
             {
                 _rigidbody.velocity = new Vector2( _storeVelocity.x, _rigidbody.velocity.y );
+            }
+        }
+    }
+
+    private void Crouch()
+    {
+        // On State Entry
+        if( _isStateEntryMode )
+        {
+            Debug.Log( "crouch" );
+            _animator.Play( "Crouch" );
+            _isStateEntryMode = false;
+        }
+        // On Update
+        else if( GetAxisAbsolute( "Horizontal" ) != 0.0f )
+        {
+            SetState( Crawl );
+        }
+    }
+
+    private void Crawl()
+    {// On State Entry
+        if( _isStateEntryMode )
+        {
+            Debug.Log( "crawl" );
+            _animator.Play( "Crawl" );
+            _isStateEntryMode = false;
+        }
+        // On Update
+        else if( !_collisionDirection.Top )
+        {
+            _collider.transform.Rotate( 0.0f, 0.0f, -90.0f );
+            _collider.transform.Translate( _collider.bounds.size.x * -0.5f, _collider.bounds.size.y * -0.5f, 0.0f );
+            _collisionHitDistanceTopLength = 1.0f;
+            SetState( Walk );
+        }
+        else
+        {
+            float horizontalAxis = GetAxisAbsolute( "Horizontal" );
+            _rigidbody.velocity = new Vector2( horizontalAxis * _moveSpeed, _rigidbody.velocity.y );
+
+            if( horizontalAxis == 0.0f )
+            {
+                SetState( Crouch );
             }
         }
     }
@@ -297,9 +345,9 @@ public class Avatar : Entity
         return axis;
     }
 
-    private void DoJump()
+    private void DoJump(float force)
     {
-        _rigidbody.AddForce( Vector2.up * _jumpForce );
+        _rigidbody.AddForce( Vector2.up * force );
     }
     #endregion
 }
