@@ -1,5 +1,9 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Defines global behaviour of player and NPCs.
+/// All characters should derives from this abstract class
+/// </summary>
 public abstract class Entity : MonoBehaviour
 {
     #region Members

@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Defines complete behaviour of the camera
+/// </summary>
 public class CameraBehaviour : MonoBehaviour
 {
     private Transform _cameraTransform;

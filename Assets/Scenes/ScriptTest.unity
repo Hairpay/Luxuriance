@@ -4572,6 +4572,36 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &752842894
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 752842895}
+  m_Layer: 0
+  m_Name: CrouchColliderPivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &752842895
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 752842894}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.52, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 953958699}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &836574140
 GameObject:
   m_ObjectHideFlags: 0
@@ -5436,8 +5466,10 @@ MonoBehaviour:
   _hopForce: 525
   _dashForce: 850
   _dashDuration: 0.3
-  _dashRecovery: 0.1
+  _dashRecoveryDuration: 0.1
   _maxDashes: 1
+  _crouchColliderScale: 0.5
+  _crouchPivot: {fileID: 752842895}
 --- !u!95 &953958698
 Animator:
   serializedVersion: 3
@@ -5472,6 +5504,7 @@ Transform:
   - {fileID: 1757220088}
   - {fileID: 2060856444}
   - {fileID: 111436312}
+  - {fileID: 752842895}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

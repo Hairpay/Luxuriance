@@ -1,5 +1,8 @@
 ﻿using System;
 
+/// <summary>
+/// Helper class
+/// </summary>
 [Serializable]
 public class Utils
 {

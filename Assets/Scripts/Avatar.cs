@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 
+/// <summary>
+/// Defines complete behaviour of the player
+/// </summary>
 public class Avatar : Entity
 {
     #region Members
@@ -9,8 +10,10 @@ public class Avatar : Entity
     public float _hopForce;
     public float _dashForce;
     public float _dashDuration;
-    public float _dashRecovery;
+    public float _dashRecoveryDuration;
     public int _maxDashes;
+    public float _crouchColliderScale;
+    public Transform _crouchPivot;
 
     private bool _controlsEnabled;
     private TimerManager _timerManager;
@@ -18,7 +21,7 @@ public class Avatar : Entity
     private Vector2 _shotDirection;
     private int _dashesLeft;
     private Vector2 _storeVelocity;
-    private float _lastAxis;
+    private Vector3 _storeColliderPosition;
     #endregion
 
     #region Behaviour
@@ -45,6 +48,9 @@ public class Avatar : Entity
         base.FixedUpdate();
     }
 
+    /// <summary>
+    /// Handle all transformations applied to and/or by <see cref="Avatar"/> physics
+    /// </summary>
     private void HandlePhysics()
     {
         if( _collisionDirection.Bottom && IsOnGround )
@@ -53,6 +59,9 @@ public class Avatar : Entity
         }
     }
 
+    /// <summary>
+    /// Handle all transformations applied to <see cref="Avatar"/> graphics
+    /// </summary>
     private void HandleGraphics()
     {
         // Flip graphics
@@ -67,6 +76,9 @@ public class Avatar : Entity
         }
     }
 
+    /// <summary>
+    /// Handle the controller's input to execute actions and/or set states
+    /// </summary>
     private void HandleInputs()
     {
         //Directions
@@ -93,6 +105,9 @@ public class Avatar : Entity
     #endregion
 
     #region States
+    /// <summary>
+    /// Defines Entry, Update and Exit actions for <see cref="Idle"/> state
+    /// </summary>
     private void Idle()
     {
         // On State Entry
@@ -109,6 +124,9 @@ public class Avatar : Entity
         }
     }
 
+    /// <summary>
+    /// Defines Entry, Update and Exit actions for <see cref="Walk"/> state
+    /// </summary>
     private void Walk()
     {
         // On State Entry
@@ -122,11 +140,7 @@ public class Avatar : Entity
             && ( _collisionDirection.RightTop && _isDirectionRight && !_collisionDirection.RightBottom
                 || _collisionDirection.LeftTop && !_isDirectionRight && !_collisionDirection.LeftBottom ) )
         {
-            _collider.transform.Rotate( 0.0f, 0.0f, 90.0f );
-            _collider.transform.Translate( _collider.bounds.size.x * 0.5f, _collider.bounds.size.y * -0.5f, 0.0f );
-            _collisionHitDistanceTopLength = 6.0f;
-            // need to modify the distance between the two detection rays
-            SetState( Crawl );
+            SetState( IdleToCrawl );
         }
         // On Update
         else if( !Utils.IsFloatEpsilonZero( _rigidbody.velocity.x )
@@ -147,6 +161,9 @@ public class Avatar : Entity
         }
     }
 
+    /// <summary>
+    /// Defines Entry, Update and Exit actions for <see cref="Dash"/> state
+    /// </summary>
     private void Dash()
     {
         // On State Entry
@@ -175,7 +192,7 @@ public class Avatar : Entity
             --_dashesLeft;
             _rigidbody.velocity = Vector2.zero;
             _rigidbody.gravityScale = _gravityScaleDefault;
-            _timerManager.CreateTimer( "DashRecovery", _dashRecovery );
+            _timerManager.CreateTimer( "DashRecovery", _dashRecoveryDuration );
             SetState( Idle );
         }
     }
@@ -194,6 +211,9 @@ public class Avatar : Entity
         }
     }
 
+    /// <summary>
+    /// Defines Entry, Update and Exit actions for <see cref="Hop"/> state
+    /// </summary>
     private void Hop()
     {
         // On Entry
@@ -239,6 +259,28 @@ public class Avatar : Entity
         }
     }
 
+    /// <summary>
+    /// Defines Entry actions for <see cref="Idle"/> to <see cref="Crawl"/> state
+    /// </summary>
+    private void IdleToCrawl()
+    {
+        // On State Entry
+        if( _isStateEntryMode )
+        {
+            Debug.Log( "idle to crawl" );
+            _animator.Play( "Crawl" );
+            _collider.transform.localScale = new Vector3( _collider.transform.localScale.x, _collider.transform.localScale.y * _crouchColliderScale, _collider.transform.localScale.z );
+            _storeColliderPosition = _collider.transform.localPosition;
+            _collider.transform.localPosition = _crouchPivot.localPosition;
+            _collisionHitDistanceTopLength = 6.0f;
+            _isStateEntryMode = false;
+            SetState( Crawl );
+        }
+    }
+
+    /// <summary>
+    /// Defines Entry, Update and Exit actions for <see cref="Crouch"/> state
+    /// </summary>
     private void Crouch()
     {
         // On State Entry
@@ -255,6 +297,9 @@ public class Avatar : Entity
         }
     }
 
+    /// <summary>
+    /// Defines Entry, Update and Exit actions for <see cref="Crawl"/> state
+    /// </summary>
     private void Crawl()
     {// On State Entry
         if( _isStateEntryMode )
@@ -266,8 +311,8 @@ public class Avatar : Entity
         // On Update
         else if( !_collisionDirection.Top )
         {
-            _collider.transform.Rotate( 0.0f, 0.0f, -90.0f );
-            _collider.transform.Translate( _collider.bounds.size.x * -0.5f, _collider.bounds.size.y * -0.5f, 0.0f );
+            _collider.transform.localScale = new Vector3( _collider.transform.localScale.x, _collider.transform.localScale.y / _crouchColliderScale, _collider.transform.localScale.z );
+            _collider.transform.localPosition = _storeColliderPosition;
             _collisionHitDistanceTopLength = 1.0f;
             SetState( Walk );
         }
@@ -283,56 +328,14 @@ public class Avatar : Entity
         }
     }
     #endregion
-    
-    #region Setters
-    /*private void SetState( State state )
-    {
-        _currentState = state;
-        switch( state )
-        {
-            case State.idle:
-                Debug.Log( "idles" );
-                _animator.Play( "Idle" );
-                _rigidbody.velocity = Vector2.zero;
-                _executeState = Idles;
-                break;
-
-            case State.walk:
-                Debug.Log( "walks" );
-                _animator.Play( "Walk" );
-                _executeState = Walks;
-                break;
-
-            case State.jump:
-                Debug.Log( "jumps" );
-                _rigidbody.AddForce( Vector2.up * _jumpForce );
-                _executeState = Jumps;
-                break;
-
-            case State.dash:
-                Debug.Log( "dashes" );
-                _animator.Play( "Dash" );
-                _timerManager.CreateTimer( "DashDuration", _dashDuration );
-                --_dashesLeft;
-                _rigidbody.gravityScale = 0;
-                _rigidbody.velocity = Vector2.zero;
-                if( Utils.IsFloatEpsilonZero( Input.GetAxis( "Horizontal" ) )
-                    && Utils.IsFloatEpsilonZero( Input.GetAxis( "Vertical" ) ) )
-                {
-                    _rigidbody.AddForce( ( _isDirectionRight ? Vector2.right : Vector2.left ) * _dashForce );
-                }
-                else
-                {
-                    _rigidbody.AddForce( new Vector2( GetAxisAbsolute( "Horizontal" ), GetAxisAbsolute( "Vertical" ) ).normalized * _dashForce );
-                }
-                _executeState = Dashes;
-                break;
-        }
-    }*/
-    #endregion
 
     #region Other
-    private float GetAxisAbsolute(string axisName )
+
+    /// <summary>
+    /// Get absolute float value for a given axis defined by <paramref name="axisName"/>
+    /// </summary>
+    /// <param name="axisName">The name of the axis in Unity (Horizontal | Vertical)</param>
+    private float GetAxisAbsolute( string axisName )
     {
         float axis = Input.GetAxis( axisName );
         if( axis > 0 )
@@ -345,6 +348,11 @@ public class Avatar : Entity
         return axis;
     }
 
+
+    /// <summary>
+    /// Execute an <see cref="Avatar"/> jump with a given <paramref name="force"/>
+    /// </summary>
+    /// <param name="force">New magnitude of <see cref="Vector2.up"/></param>
     private void DoJump(float force)
     {
         _rigidbody.AddForce( Vector2.up * force );
