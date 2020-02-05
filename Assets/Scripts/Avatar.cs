@@ -30,7 +30,7 @@ public class Avatar : Entity
         _timerManager = new TimerManager();
         _isDirectionRight = true;
         _controlsEnabled = true;
-         _dashesLeft = _maxDashes;
+        _dashesLeft = _maxDashes;
         SetState( Idle );
     }
 
@@ -347,7 +347,6 @@ public class Avatar : Entity
 
         return axis;
     }
-
 
     /// <summary>
     /// Execute an <see cref="Avatar"/> jump with a given <paramref name="force"/>
