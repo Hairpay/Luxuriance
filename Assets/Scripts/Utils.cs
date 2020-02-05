@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 /// <summary>
 /// Helper class
@@ -12,4 +13,12 @@ public class Utils
         return value > -epsilon && value < epsilon;
     }
     public float Epsilon { get { return _epsilon; } }
+}
+
+public static class ExtensionMethods
+{
+    public static bool IsAnalyzable(this GameObject gameObject)
+    {
+        return gameObject.GetComponent<Analyzable>() ?? false;
+    }
 }

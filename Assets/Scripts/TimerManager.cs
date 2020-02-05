@@ -13,7 +13,7 @@ public class TimerManager
 
     public void UpdateTimers()
     {
-        IList<string> keys = new List<string>( _timers.Keys );
+        var keys = new List<string>( _timers.Keys );
 
         foreach( string key in keys )
         {

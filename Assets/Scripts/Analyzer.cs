@@ -1,30 +1,69 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Analyzer : MonoBehaviour
 {
+    [Min(0.0f)] public float _rayDistance;
+    [Min(0.0f)] public float _analysisDuration;
+
     private float _analysisDeltaTime;
-    private const float _analysisTime = 1.0f;
     private Avatar _avatar;
 
-    // Start is called before the first frame update
     private void Start()
     {
         _avatar = GetComponentInParent<Avatar>();
     }
 
-    // Update is called once per frame
     private void Update()
     {
-        if( Input.GetButtonDown( "Scan" ) )
+        if( Input.GetButtonDown( "Analyze" ) )
         {
-
+            var raycast = CastRay();
+            var analyzable = raycast.collider.GetComponent<Analyzable>();
+            if (analyzable != null)
+            {
+                if (GetAnalysis())
+                {
+                    analyzable.DisplayMessage();
+                    ResetAnalysisTimer();
+                }
+            }
+            else
+            {
+                ResetAnalysisTimer();
+            }
+        }
+        else
+        {
+            ResetAnalysisTimer();
         }
     }
 
-    private void CastRay()
+    private RaycastHit2D CastRay()
     {
+        var origin = gameObject.transform.position;
+        var direction = new Vector2
+        {
+            x = Input.GetAxisRaw("HorizontalDirection") * _rayDistance,
+            y = Input.GetAxisRaw("VerticalDirection") * _rayDistance
+        };
 
+        var raycast = Physics2D.Raycast(origin, direction, _rayDistance);
+        Debug.DrawRay(origin, direction, Color.yellow);
+
+        return raycast;
+    }
+
+    private bool GetAnalysis()
+    {
+        _analysisDeltaTime += Time.deltaTime;
+        return _analysisDeltaTime > _analysisDuration;
+    }
+
+    private void ResetAnalysisTimer()
+    {
+        _analysisDeltaTime = 0.0f;
     }
 }

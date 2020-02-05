@@ -28,13 +28,13 @@ public abstract class Entity : MonoBehaviour
 
         public bool Any()
         {
-            bool any = Bottom || Top || LeftBottom || RightBottom || LeftTop || RightTop;
+            var any = Bottom || Top || LeftBottom || RightBottom || LeftTop || RightTop;
             return any;
         }
 
         public bool AnySide()
         {
-            bool anySide = LeftBottom || RightBottom || LeftTop || RightTop;
+            var anySide = LeftBottom || RightBottom || LeftTop || RightTop;
             return anySide;
         }
 
@@ -50,7 +50,7 @@ public abstract class Entity : MonoBehaviour
                 return string.Empty;
             }
 
-            string result = "Collisions:\n";
+            var result = "Collisions:\n";
 
             if( Bottom )
                 result += "Bottom";
@@ -115,35 +115,35 @@ public abstract class Entity : MonoBehaviour
 
     protected void CheckCollisions()
     {
-        float offset = 0.01f;
+        var offset = 0.01f;
 
         #region Collision: Bottom
-        Vector2 colliderBottomLeft = new Vector2( _collider.bounds.min.x, _collider.bounds.min.y - offset );
-        Vector2 colliderBottomRight = new Vector2( _collider.bounds.min.x + _collider.bounds.size.x, _collider.bounds.min.y - offset );
+        var colliderBottomLeft = new Vector2( _collider.bounds.min.x, _collider.bounds.min.y - offset );
+        var colliderBottomRight = new Vector2( _collider.bounds.min.x + _collider.bounds.size.x, _collider.bounds.min.y - offset );
 
         _collisionDirection.Bottom = Physics2D.Raycast( colliderBottomLeft, Vector2.down, _collisionHitDistance * _collisionHitDistanceBottomLength )
             || Physics2D.Raycast( colliderBottomRight, Vector2.down, _collisionHitDistance * _collisionHitDistanceBottomLength );
         #endregion
 
         #region Collision: Top
-        Vector2 colliderTopLeft = new Vector2( _collider.bounds.min.x, _collider.bounds.max.y + offset );
-        Vector2 colliderTopRight = new Vector2( _collider.bounds.max.x, _collider.bounds.max.y + offset );
+        var colliderTopLeft = new Vector2( _collider.bounds.min.x, _collider.bounds.max.y + offset );
+        var colliderTopRight = new Vector2( _collider.bounds.max.x, _collider.bounds.max.y + offset );
 
         _collisionDirection.Top = Physics2D.Raycast( colliderTopLeft, Vector2.up, _collisionHitDistance * _collisionHitDistanceTopLength )
             || Physics2D.Raycast( colliderTopRight, Vector2.up, _collisionHitDistance * _collisionHitDistanceTopLength );
         #endregion
 
         #region Collision: Left
-        Vector2 colliderLeftBottom = new Vector2( _collider.bounds.min.x - offset, _collider.bounds.min.y );
-        Vector2 colliderLeftTop = new Vector2( _collider.bounds.min.x - offset, _collider.bounds.max.y );
+        var colliderLeftBottom = new Vector2( _collider.bounds.min.x - offset, _collider.bounds.min.y );
+        var colliderLeftTop = new Vector2( _collider.bounds.min.x - offset, _collider.bounds.max.y );
 
         _collisionDirection.LeftBottom = Physics2D.Raycast( colliderLeftBottom, Vector2.left, _collisionHitDistance * _collisionHitDistanceLeftLength );
         _collisionDirection.LeftTop = Physics2D.Raycast( colliderLeftTop, Vector2.left, _collisionHitDistance * _collisionHitDistanceLeftLength );
         #endregion
 
         #region Collision: Right
-        Vector2 colliderRightBottom = new Vector2( _collider.bounds.max.x + offset, _collider.bounds.min.y );
-        Vector2 colliderRightTop = new Vector2( _collider.bounds.max.x + offset, _collider.bounds.max.y );
+        var colliderRightBottom = new Vector2( _collider.bounds.max.x + offset, _collider.bounds.min.y );
+        var colliderRightTop = new Vector2( _collider.bounds.max.x + offset, _collider.bounds.max.y );
 
         _collisionDirection.RightBottom = Physics2D.Raycast( colliderRightBottom, Vector2.right, _collisionHitDistance * _collisionHitDistanceRightLength );
         _collisionDirection.RightTop = Physics2D.Raycast( colliderRightTop, Vector2.right, _collisionHitDistance * _collisionHitDistanceRightLength );
@@ -167,8 +167,8 @@ public abstract class Entity : MonoBehaviour
     #region Other
     protected void SetVelocity(float? x = null, float? y = null)
     {
-        float newX = x ?? _rigidbody.velocity.x;
-        float newY = y ?? _rigidbody.velocity.y;
+        var newX = x ?? _rigidbody.velocity.x;
+        var newY = y ?? _rigidbody.velocity.y;
         _rigidbody.velocity.Set( newX, newY );
     }
 

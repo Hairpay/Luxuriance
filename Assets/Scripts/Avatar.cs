@@ -69,7 +69,7 @@ public class Avatar : Entity
         if( _isDirectionRight && _rigidbody.velocity.x < 0
             || !_isDirectionRight && _rigidbody.velocity.x > 0 )
         {
-            Vector3 mirrorScale = transform.localScale;
+            var mirrorScale = transform.localScale;
             mirrorScale.x *= -1;
             transform.localScale = mirrorScale;
             _isDirectionRight = !_isDirectionRight;
@@ -151,7 +151,7 @@ public class Avatar : Entity
         }
         else
         {
-            float horizontalAxis = GetAxisAbsolute( "Horizontal" );
+            var horizontalAxis = GetAxisAbsolute( "Horizontal" );
             _rigidbody.velocity = new Vector2( horizontalAxis * _moveSpeed, _rigidbody.velocity.y );
 
             if( horizontalAxis == 0.0f )
@@ -221,7 +221,7 @@ public class Avatar : Entity
         {
             Debug.Log( "hop" );
             _animator.Play( "Hop" );
-            float horizontalAxis = GetAxisAbsolute( "Horizontal" );
+            var horizontalAxis = GetAxisAbsolute( "Horizontal" );
             _rigidbody.velocity = new Vector2( horizontalAxis * _moveSpeed, 0.0f );
             _storeVelocity = _rigidbody.velocity;
             DoJump( _hopForce );
@@ -337,7 +337,7 @@ public class Avatar : Entity
     /// <param name="axisName">The name of the axis in Unity (Horizontal | Vertical)</param>
     private float GetAxisAbsolute( string axisName )
     {
-        float axis = Input.GetAxis( axisName );
+        var axis = Input.GetAxis( axisName );
         if( axis > 0 )
             axis = 1.0f;
         else if( axis < 0 )
