@@ -5,6 +5,7 @@ TextureImporter:
     21300000: Crochet_0
     21300002: Crochet_1
     21300004: Crochet_2
+    21300006: Crochet_3
   externalObjects: {}
   serializedVersion: 9
   mipmaps:
@@ -91,6 +92,26 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
+        y: 48
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd480d1e2db2fbc458618fae862658ae
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Crochet_1
+      rect:
+        serializedVersion: 2
+        x: 0
         y: 32
         width: 16
         height: 16
@@ -101,13 +122,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8533c06baf6978442885d192209b52c5
+      spriteID: 8ae0cc5835f6e714a8095b4623ce6fc9
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Crochet_1
+      name: Crochet_2
       rect:
         serializedVersion: 2
         x: 0
@@ -121,13 +142,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 67ddba1501ef9ef4c931a5fc083d36e3
+      spriteID: 9de57b8bd4a043f4d8185582617a42ff
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Crochet_2
+      name: Crochet_3
       rect:
         serializedVersion: 2
         x: 0
@@ -141,7 +162,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fab88758cdd13d546b5f13a6539db5c5
+      spriteID: 33492c2a601c97244bbb7c3d2c57055b
       vertices: []
       indices: 
       edges: []
@@ -149,7 +170,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 3e8141e1d7517de4dac6072258226fd1
+    spriteID: f805b6bb7d78b3c42987597263b8d214
     vertices: []
     indices: 
     edges: []
