@@ -21,6 +21,6 @@ public class Analyzable : MonoBehaviour
 
     public void DisplayMessage()
     {
-        Debug.Log("Object analyzed !");
+        Debug.Log(_message);
     }
 }

@@ -18,13 +18,13 @@ public class Analyzer : MonoBehaviour
 
     private void Update()
     {
-        if( Input.GetButtonDown( "Analyze" ) )
+        if( Input.GetAxis( "Trigger" ) > 0 )
         {
             var raycast = CastRay();
-            var analyzable = raycast.collider.GetComponent<Analyzable>();
-            if (analyzable != null)
+            if( raycast.collider != null && raycast.collider.GetComponents<Analyzable>().Length > 0 )
             {
-                if (GetAnalysis())
+                var analyzable = raycast.collider.GetComponent<Analyzable>();
+                if( GetAnalysis() )
                 {
                     analyzable.DisplayMessage();
                     ResetAnalysisTimer();
@@ -43,12 +43,15 @@ public class Analyzer : MonoBehaviour
 
     private RaycastHit2D CastRay()
     {
-        var origin = gameObject.transform.position;
+        Debug.Log( "Casting a ray" );
+        var origin = new Vector2(transform.position.x, transform.position.y);
         var direction = new Vector2
         {
-            x = Input.GetAxisRaw("HorizontalDirection") * _rayDistance,
-            y = Input.GetAxisRaw("VerticalDirection") * _rayDistance
+            x = Input.GetAxis( "HorizontalDirection"),
+            y = Input.GetAxis( "VerticalDirection")
         };
+
+        direction = direction.normalized * _rayDistance;
 
         var raycast = Physics2D.Raycast(origin, direction, _rayDistance);
         Debug.DrawRay(origin, direction, Color.yellow);
