@@ -1,11 +1,15 @@
 fileFormatVersion: 2
 guid: 10975d75be9d0b94aa82d477de4a5c22
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: DVine1_2_A_0
-    21300002: DVine1_2_A_1
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: DVine1_2_A_0
+  - first:
+      213: 21300002
+    second: DVine1_2_A_1
   externalObjects: {}
-  serializedVersion: 9
+  serializedVersion: 10
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -60,7 +64,7 @@ TextureImporter:
   compressionQualitySet: 0
   textureFormatSet: 0
   platformSettings:
-  - serializedVersion: 2
+  - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -71,7 +75,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - serializedVersion: 2
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -82,6 +87,7 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -101,6 +107,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 7b1854f4b9b01a045bb0929606555b64
+      internalID: 21300000
       vertices: []
       indices: 
       edges: []
@@ -121,6 +128,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 88e0282c78dd083449d525f80734945b
+      internalID: 21300002
       vertices: []
       indices: 
       edges: []
@@ -129,10 +137,12 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: dfc67776fb5a23249bf05740bfe8fe82
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
+    secondaryTextures: []
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

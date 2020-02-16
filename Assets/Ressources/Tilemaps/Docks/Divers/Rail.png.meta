@@ -1,13 +1,21 @@
 fileFormatVersion: 2
 guid: 94526e827c7e8b94581edfd78cbc4f62
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: Sans titre-1_0
-    21300002: Sans titre-1_1
-    21300004: Rail_0
-    21300006: Rail_1
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: Sans titre-1_0
+  - first:
+      213: 21300002
+    second: Sans titre-1_1
+  - first:
+      213: 21300004
+    second: Rail_0
+  - first:
+      213: 21300006
+    second: Rail_1
   externalObjects: {}
-  serializedVersion: 9
+  serializedVersion: 10
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -62,7 +70,7 @@ TextureImporter:
   compressionQualitySet: 0
   textureFormatSet: 0
   platformSettings:
-  - serializedVersion: 2
+  - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -73,7 +81,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - serializedVersion: 2
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -84,6 +93,7 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -103,6 +113,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 16e7f2b364c1fa445be884214e33b1fd
+      internalID: 21300004
       vertices: []
       indices: 
       edges: []
@@ -123,6 +134,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 2ebf15f708a42344eb6f6a4fdb8cb48d
+      internalID: 21300006
       vertices: []
       indices: 
       edges: []
@@ -131,10 +143,12 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 6ed5b5fba7a2dec40ba0b65ffe29eabf
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
+    secondaryTextures: []
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
