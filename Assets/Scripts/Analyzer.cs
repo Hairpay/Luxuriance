@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
+using Entities;
 public class Analyzer : MonoBehaviour
 {
-    [Min(0.0f)] public float _rayDistance;
-    [Min(0.0f)] public float _analysisDuration;
+    [Min(0.0f)] public float RayDistance;
+    [Min(0.0f)] public float AnalysisDuration;
 
     private float _analysisDeltaTime;
-    private Avatar _avatar;
-
+    private PlayerAvatar _avatar;
     private void Start()
     {
-        _avatar = GetComponentInParent<Avatar>();
+        _avatar = GetComponentInParent<PlayerAvatar>();
     }
 
     private void Update()
@@ -51,9 +47,9 @@ public class Analyzer : MonoBehaviour
             y = Input.GetAxis( "VerticalDirection")
         };
 
-        direction = direction.normalized * _rayDistance;
+        direction = direction.normalized * RayDistance;
 
-        var raycast = Physics2D.Raycast(origin, direction, _rayDistance);
+        var raycast = Physics2D.Raycast(origin, direction, RayDistance);
         Debug.DrawRay(origin, direction, Color.yellow);
 
         return raycast;
@@ -62,7 +58,7 @@ public class Analyzer : MonoBehaviour
     private bool GetAnalysis()
     {
         _analysisDeltaTime += Time.deltaTime;
-        return _analysisDeltaTime > _analysisDuration;
+        return _analysisDeltaTime > AnalysisDuration;
     }
 
     private void ResetAnalysisTimer()
